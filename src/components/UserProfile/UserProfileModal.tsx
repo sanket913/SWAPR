@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { X, MapPin, Star, Calendar, MessageCircle, User as UserIcon } from 'lucide-react';
-import { User } from '../../types';
-import { useAuth } from '../../context/AuthContext';
-import { useSwapRequests, useNotifications } from '../../hooks/useData';
+import { User } from '@/types';
+import { useAuth } from '@/context/AuthContext';
+import { useSwapRequests, useNotifications } from '@/hooks/useData';
 
 interface UserProfileModalProps {
   user: User;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Users, ArrowRight, Star, Shield, Zap, Play, CheckCircle, TrendingUp, Sparkles, Rocket, Heart, Globe } from 'lucide-react';
+import Image from 'next/image';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -104,7 +105,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             
             <p className="text-xl sm:text-2xl lg:text-3xl text-gray-600 mb-12 max-w-5xl mx-auto leading-relaxed animate-slide-in-up delay-500 px-4">
               Connect with passionate learners worldwide to exchange skills, unlock new abilities, and grow together. 
-              <span className="gradient-text font-semibold"> No money involved—just pure knowledge sharing!</span>
+              <span className="gradient-text font-semibold"> Welcome to Swapr—where skills meet opportunity!</span>
             </p>
 
             {/* CTA Buttons */}
@@ -221,9 +222,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <div key={index} className={`text-center group animate-slide-in-up delay-${index * 200 + 300}`}>
                 <div className="relative mb-8">
                   <div className="relative w-40 h-40 mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
-                    <img
+                    <Image
                       src={step.image}
                       alt={step.title}
+                      width={160}
+                      height={160}
                       className="w-full h-full object-cover rounded-3xl shadow-2xl animate-morph"
                     />
                     <div className={`absolute inset-0 bg-gradient-to-br ${step.gradient} opacity-30 rounded-3xl group-hover:opacity-50 transition-opacity duration-300`}></div>
@@ -265,9 +268,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="relative z-10">
                   <div className="flex items-center mb-6">
                     <div className="relative">
-                      <img
+                      <Image
                         src={testimonial.avatar}
                         alt={testimonial.name}
+                        width={80}
+                        height={80}
                         className="w-20 h-20 rounded-2xl object-cover shadow-xl group-hover:scale-110 transition-transform duration-300"
                       />
                       <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center shadow-lg">

@@ -1,7 +1,7 @@
-import express from 'express';
-import Notification from '../models/Notification.js';
-import User from '../models/User.js';
-import { auth, adminAuth } from '../middleware/auth.js';
+const express = require('express');
+const Notification = require('../models/Notification');
+const User = require('../models/User');
+const { auth, adminAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -9,9 +9,9 @@ const router = express.Router();
 router.get('/', auth, async (req, res) => {
   try {
     const { limit = 50, page = 1, unreadOnly = false } = req.query;
-
+    
     let query = { userId: req.user._id };
-
+    
     if (unreadOnly === 'true') {
       query.isRead = false;
     }
@@ -22,9 +22,9 @@ router.get('/', auth, async (req, res) => {
       .sort({ createdAt: -1 });
 
     const total = await Notification.countDocuments(query);
-    const unreadCount = await Notification.countDocuments({
-      userId: req.user._id,
-      isRead: false
+    const unreadCount = await Notification.countDocuments({ 
+      userId: req.user._id, 
+      isRead: false 
     });
 
     res.json({
@@ -84,13 +84,14 @@ router.post('/admin/announcement', adminAuth, async (req, res) => {
     const { title, message, sendTo = 'all' } = req.body;
 
     let targetUsers = await User.find({ isAdmin: false }).select('_id');
-
+    
     if (sendTo === 'active') {
       targetUsers = await User.find({ isAdmin: false, isPublic: true }).select('_id');
     } else if (sendTo === 'inactive') {
       targetUsers = await User.find({ isAdmin: false, isPublic: false }).select('_id');
     }
 
+    // Create notifications for all target users
     const notifications = targetUsers.map(user => ({
       userId: user._id,
       type: 'admin_announcement',
@@ -101,7 +102,7 @@ router.post('/admin/announcement', adminAuth, async (req, res) => {
 
     await Notification.insertMany(notifications);
 
-    res.json({
+    res.json({ 
       message: 'Announcement sent successfully',
       sentCount: notifications.length
     });
@@ -130,5 +131,4 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// ✅ Export using ES Module syntax
-export default router;
+module.exports = router;

@@ -1,25 +1,27 @@
-# Swapr Platform with MongoDB Integration
+# Swapr Platform - Next.js Version
 
-A comprehensive skill exchange platform built with React, Node.js, Express, and MongoDB.
+A comprehensive skill exchange platform built with Next.js 14, React, Node.js, Express, and MongoDB.
 
 ## Features
 
 - **User Authentication**: Secure registration and login with JWT tokens
-- **Skill Management**: Users can offer and request skills
+- **Skill Management**: Users can offer and request skills  
 - **Swap Requests**: Create, manage, and track skill exchange requests
 - **Reviews & Ratings**: Rate and review skill exchange experiences
-- **Real-time Notifications**: Get notified about swap requests and updates
+- **Notifications**: Get notified about swap requests and updates
 - **Admin Dashboard**: Comprehensive admin panel for platform management
-- **Advanced Features**: Gamification, AI matching, video calls, and more
+- **Server-Side Rendering**: Fast loading with Next.js SSR
+- **Responsive Design**: Mobile-first design with Tailwind CSS
 
 ## Tech Stack
 
 ### Frontend
+- Next.js 14 with App Router
 - React 18 with TypeScript
 - Tailwind CSS for styling
 - Framer Motion for animations
-- Leaflet for maps
 - Lucide React for icons
+- Next.js Image optimization
 
 ### Backend
 - Node.js with Express
@@ -30,26 +32,26 @@ A comprehensive skill exchange platform built with React, Node.js, Express, and 
 ## Setup Instructions
 
 ### Prerequisites
-- Node.js (v16 or higher)
+- Node.js (v18 or higher)
 - MongoDB (local installation or MongoDB Atlas)
 - Your logo file (logo.png) placed in the public directory
 
 ### 1. Environment Setup
 
-Create a `.env` file in the **root directory** (not in the server folder):
+Create a `.env.local` file in the **root directory**:
 
 ```env
 # MongoDB Configuration
-MONGODB_URI=mongodb://localhost:27017/Swapr
+MONGODB_URI=mongodb://localhost:27017/swapr
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 NODE_ENV=development
 
 # Frontend Configuration
-VITE_API_URL=http://localhost:3001/api
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
 ```
 
 **Important Notes:**
-- The `.env` file should be in the root directory of the project (same level as package.json)
+- The `.env.local` file should be in the root directory of the project
 - Replace `MONGODB_URI` with your actual MongoDB connection string
 - Change `JWT_SECRET` to a secure random string for production
 
@@ -58,33 +60,17 @@ VITE_API_URL=http://localhost:3001/api
 #### Option A: Local MongoDB
 1. Install MongoDB locally
 2. Start MongoDB service
-3. Use the default URI: `mongodb://localhost:27017/Swapr`
+3. Use the default URI: `mongodb://localhost:27017/swapr`
 4. The database will be created automatically
 
 #### Option B: MongoDB Atlas (Cloud)
 1. Create a MongoDB Atlas account
 2. Create a new cluster
 3. Get your connection string
-4. Replace `MONGODB_URI` in `.env` with your Atlas connection string:
+4. Replace `MONGODB_URI` in `.env.local` with your Atlas connection string:
    ```
-   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/Swapr?retryWrites=true&w=majority
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/swapr?retryWrites=true&w=majority
    ```
-
-#### Option C: MongoDB Docker (Alternative)
-If you prefer using Docker:
-```bash
-docker run -d -p 27017:27017 --name mongodb mongo:latest
-```
-Then use: `MONGODB_URI=mongodb://localhost:27017/Swapr`
-
-### Environment Variables Explained
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/Swapr` |
-| `JWT_SECRET` | Secret key for JWT tokens | `your-super-secret-jwt-key-change-this` |
-| `NODE_ENV` | Environment mode | `development` or `production` |
-| `VITE_API_URL` | Frontend API endpoint | `http://localhost:3001/api` |
 
 ### 3. Installation
 
@@ -93,10 +79,9 @@ Then use: `MONGODB_URI=mongodb://localhost:27017/Swapr`
 2. Name it `logo.png`
 3. Recommended dimensions: 200-300px width, 40-60px height for best results
 
-Install all dependencies from the root directory:
+Install all dependencies:
 
 ```bash
-# Install all dependencies (frontend and backend)
 npm install
 ```
 
@@ -109,14 +94,51 @@ npm run dev
 ```
 
 This will start:
-- Frontend on http://localhost:5173
+- Next.js frontend on http://localhost:3000
 - Backend API on http://localhost:3001
 
-### 5. Default Admin Account
+### 5. Building for Production
+
+```bash
+npm run build
+npm start
+```
+
+### 6. Default Admin Account
 
 The system creates a default admin account:
-- Email: admin@Swapr.com
+- Email: admin@swapr.com
 - Password: admin123
+
+## Next.js Features Used
+
+- **App Router**: Modern routing with layouts and nested routes
+- **Server Components**: Optimized rendering performance
+- **Image Optimization**: Automatic image optimization with next/image
+- **TypeScript**: Full type safety throughout the application
+- **CSS Modules**: Scoped styling with Tailwind CSS
+- **Environment Variables**: Secure configuration management
+
+## Project Structure
+
+```
+src/
+├── app/                 # Next.js App Router
+│   ├── layout.tsx      # Root layout
+│   ├── page.tsx        # Home page
+│   └── globals.css     # Global styles
+├── components/         # React components
+│   ├── Auth/          # Authentication components
+│   ├── Browse/        # Browse and search components
+│   ├── Profile/       # User profile components
+│   ├── Swaps/         # Swap management components
+│   ├── Admin/         # Admin dashboard components
+│   └── Layout/        # Layout components
+├── context/           # React context providers
+├── hooks/             # Custom React hooks
+├── lib/               # Utility libraries
+└── types/             # TypeScript type definitions
+```
 
 ## API Endpoints
 
@@ -153,43 +175,17 @@ The system creates a default admin account:
 - `DELETE /api/notifications/:id` - Delete notification
 - `POST /api/notifications/admin/announcement` - Admin: Send announcement
 
-## Database Schema
-
-### User Model
-- Personal information (name, email, location)
-- Skills offered and wanted
-- Availability and preferences
-- Gamification data (points, badges, level)
-- Admin status and permissions
-
-### SwapRequest Model
-- Participants (from/to users)
-- Skills being exchanged
-- Status tracking
-- Meeting details and terms
-
-### Review Model
-- Swap request reference
-- Ratings and feedback
-- Detailed skill assessments
-
-### Notification Model
-- User-specific notifications
-- Type-based categorization
-- Read status tracking
-
 ## Development
 
 ### Adding New Features
 
 1. **Backend**: Add routes in `server/routes/`
 2. **Database**: Update models in `server/models/`
-3. **Frontend**: Update API service in `src/services/api.ts`
+3. **Frontend**: Update API service in `src/lib/api.ts`
 4. **UI**: Create/update components in `src/components/`
+5. **Types**: Update TypeScript types in `src/types/`
 
 ### Installing New Dependencies
-
-All dependencies are now managed from the root `package.json`. To add new dependencies:
 
 ```bash
 # For frontend dependencies
@@ -202,17 +198,18 @@ npm install package-name
 npm install package-name --save-dev
 ```
 
-### Database Migrations
-
-The application uses Mongoose schemas with automatic validation. Schema changes are applied automatically when the server starts.
-
 ## Production Deployment
 
-### Environment Variables
-Set these in production:
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+### Environment Variables for Production
 - `MONGODB_URI`: Your production MongoDB connection string
 - `JWT_SECRET`: A secure random string
 - `NODE_ENV`: Set to "production"
+- `NEXT_PUBLIC_API_URL`: Your production API URL
 
 ### Security Considerations
 - Use HTTPS in production
@@ -222,29 +219,37 @@ Set these in production:
 - Implement rate limiting
 - Add input validation and sanitization
 
+## Performance Optimizations
+
+- **Next.js Image Optimization**: Automatic image optimization and lazy loading
+- **Server-Side Rendering**: Faster initial page loads
+- **Code Splitting**: Automatic code splitting for optimal bundle sizes
+- **Static Generation**: Pre-rendered pages where possible
+- **API Route Optimization**: Efficient API endpoints
+
 ## Troubleshooting
 
 ### Common Issues
 
 1. **MongoDB Connection Error**
    - Check if MongoDB is running
-   - Verify connection string in `.env`
+   - Verify connection string in `.env.local`
    - Check network connectivity for Atlas
 
 2. **Authentication Issues**
    - Verify JWT_SECRET is set
    - Check token expiration
-   - Clear browser localStorage if needed
+   - Clear browser cookies if needed
 
-3. **API Errors**
-   - Check server logs
-   - Verify API endpoints
-   - Check request headers and body
+3. **Next.js Build Errors**
+   - Check TypeScript errors
+   - Verify all imports are correct
+   - Check environment variables
 
-### Logs
-- Server logs: Check console output
-- Frontend errors: Check browser console
-- Database queries: Enable Mongoose debug mode
+4. **Image Loading Issues**
+   - Ensure images are in the public directory
+   - Check Next.js Image component configuration
+   - Verify image domains in next.config.js
 
 ## Contributing
 

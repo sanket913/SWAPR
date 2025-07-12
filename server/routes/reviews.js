@@ -1,9 +1,9 @@
-import express from 'express';
-import Review from '../models/Review.js';
-import User from '../models/User.js';
-import SwapRequest from '../models/SwapRequest.js';
-import Notification from '../models/Notification.js';
-import { auth } from '../middleware/auth.js';
+const express = require('express');
+const Review = require('../models/Review');
+const User = require('../models/User');
+const SwapRequest = require('../models/SwapRequest');
+const Notification = require('../models/Notification');
+const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ const router = express.Router();
 router.get('/user/:userId', async (req, res) => {
   try {
     const { limit = 20, page = 1 } = req.query;
-
+    
     const reviews = await Review.find({ revieweeId: req.params.userId })
       .populate('reviewerId', 'name profilePhoto')
       .populate('swapRequestId', 'skillOffered skillWanted')
@@ -39,10 +39,10 @@ router.get('/user/:userId', async (req, res) => {
 // Create review
 router.post('/', auth, async (req, res) => {
   try {
-    const {
-      swapRequestId,
-      revieweeId,
-      rating,
+    const { 
+      swapRequestId, 
+      revieweeId, 
+      rating, 
       comment,
       skillRating,
       communicationRating,
@@ -52,18 +52,18 @@ router.post('/', auth, async (req, res) => {
       wouldSwapAgain
     } = req.body;
 
+    // Check if swap request exists and user is authorized
     const swapRequest = await SwapRequest.findById(swapRequestId);
     if (!swapRequest) {
       return res.status(404).json({ message: 'Swap request not found' });
     }
 
-    if (
-      swapRequest.fromUserId.toString() !== req.user._id.toString() &&
-      swapRequest.toUserId.toString() !== req.user._id.toString()
-    ) {
+    if (swapRequest.fromUserId.toString() !== req.user._id.toString() && 
+        swapRequest.toUserId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
+    // Check if review already exists
     const existingReview = await Review.findOne({
       swapRequestId,
       reviewerId: req.user._id
@@ -73,6 +73,7 @@ router.post('/', auth, async (req, res) => {
       return res.status(400).json({ message: 'Review already exists' });
     }
 
+    // Create review
     const review = new Review({
       swapRequestId,
       reviewerId: req.user._id,
@@ -89,14 +90,16 @@ router.post('/', auth, async (req, res) => {
 
     await review.save();
 
+    // Update user's rating
     const reviews = await Review.find({ revieweeId });
     const averageRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-
+    
     await User.findByIdAndUpdate(revieweeId, {
       rating: averageRating,
       totalReviews: reviews.length
     });
 
+    // Create notification
     const notification = new Notification({
       userId: revieweeId,
       type: 'review',
@@ -121,7 +124,7 @@ router.post('/', auth, async (req, res) => {
 router.get('/given', auth, async (req, res) => {
   try {
     const { limit = 20, page = 1 } = req.query;
-
+    
     const reviews = await Review.find({ reviewerId: req.user._id })
       .populate('revieweeId', 'name profilePhoto')
       .populate('swapRequestId', 'skillOffered skillWanted')
@@ -146,5 +149,4 @@ router.get('/given', auth, async (req, res) => {
   }
 });
 
-// ✅ Export using ES Module syntax
-export default router;
+module.exports = router;

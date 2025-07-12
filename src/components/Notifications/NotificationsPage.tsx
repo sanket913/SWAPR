@@ -1,7 +1,7 @@
 import React from 'react';
 import { Bell, CheckCircle, XCircle, Star, MessageSquare, Megaphone } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useNotifications } from '../../hooks/useData';
+import { useAuth } from '@/context/AuthContext';
+import { useNotifications } from '@/hooks/useData';
 
 const NotificationsPage: React.FC = () => {
   const { currentUser } = useAuth();

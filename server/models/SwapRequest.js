@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const swapTermsSchema = new mongoose.Schema({
   duration: { type: Number, required: true }, // in minutes
@@ -28,7 +28,7 @@ const swapRequestSchema = new mongoose.Schema({
     enum: ['pending', 'accepted', 'rejected', 'cancelled', 'completed'],
     default: 'pending'
   },
-
+  
   // Advanced features
   scheduledAt: Date,
   duration: { type: Number, default: 60 }, // in minutes
@@ -51,6 +51,4 @@ swapRequestSchema.index({ fromUserId: 1, status: 1 });
 swapRequestSchema.index({ toUserId: 1, status: 1 });
 swapRequestSchema.index({ status: 1, createdAt: -1 });
 
-// ✅ Export with ES module syntax
-const SwapRequest = mongoose.model('SwapRequest', swapRequestSchema);
-export default SwapRequest;
+module.exports = mongoose.model('SwapRequest', swapRequestSchema);

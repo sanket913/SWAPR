@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Megaphone, Send, Users, Calendar, Edit, Trash2, Plus } from 'lucide-react';
-import { useNotifications, useUsers } from '../../hooks/useData';
+import { useNotifications, useUsers } from '@/hooks/useData';
 
 interface Announcement {
   id: string;

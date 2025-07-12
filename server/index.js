@@ -1,20 +1,10 @@
-// ES module import for dotenv
-import dotenv from 'dotenv';
-dotenv.config();
+require('dotenv').config();
 
-// Import required packages using ES module syntax
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-
-// Import routes (note: include `.js` extensions)
-import authRoutes from './routes/auth.js';
-import userRoutes from './routes/users.js';
-import swapRoutes from './routes/swaps.js';
-import reviewRoutes from './routes/reviews.js';
-import notificationRoutes from './routes/notifications.js';
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -31,6 +21,13 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
 
+// Import routes
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/users');
+const swapRoutes = require('./routes/swaps');
+const reviewRoutes = require('./routes/reviews');
+const notificationRoutes = require('./routes/notifications');
+
 // Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -43,7 +40,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Swapr API is running' });
 });
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const reviewSchema = new mongoose.Schema({
   swapRequestId: { 
@@ -23,7 +23,7 @@ const reviewSchema = new mongoose.Schema({
     max: 5 
   },
   comment: String,
-
+  
   // Detailed feedback
   skillRating: { type: Number, min: 1, max: 5 },
   communicationRating: { type: Number, min: 1, max: 5 },
@@ -40,6 +40,4 @@ reviewSchema.index({ revieweeId: 1, createdAt: -1 });
 reviewSchema.index({ reviewerId: 1, createdAt: -1 });
 reviewSchema.index({ swapRequestId: 1 });
 
-// ✅ Export using ES Module syntax
-const Review = mongoose.model('Review', reviewSchema);
-export default Review;
+module.exports = mongoose.model('Review', reviewSchema);

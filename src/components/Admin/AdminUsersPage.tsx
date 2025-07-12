@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Filter, MoreVertical, Ban, CheckCircle, XCircle, Eye, Trash2, UserCheck, UserX } from 'lucide-react';
-import { useUsers } from '../../hooks/useData';
-import { User } from '../../types';
+import { useUsers } from '@/hooks/useData';
+import { User } from '@/types';
 
 const AdminUsersPage: React.FC = () => {
   const { users } = useUsers();

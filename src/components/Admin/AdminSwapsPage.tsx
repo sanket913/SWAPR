@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Filter, Eye, CheckCircle, XCircle, Clock, Star, AlertTriangle } from 'lucide-react';
-import { useSwapRequests, useUsers } from '../../hooks/useData';
-import { SwapRequest } from '../../types';
+import { useSwapRequests, useUsers } from '@/hooks/useData';
+import { SwapRequest } from '@/types';
 
 const AdminSwapsPage: React.FC = () => {
   const { swapRequests, updateSwapRequest } = useSwapRequests();

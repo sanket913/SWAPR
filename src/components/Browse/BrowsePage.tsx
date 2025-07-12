@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, MapPin, Star, Clock, Filter, Users, Sparkles, TrendingUp, Zap, Globe, Target } from 'lucide-react';
-import { useUsers } from '../../hooks/useData';
-import { useAuth } from '../../context/AuthContext';
+import { useUsers } from '@/hooks/useData';
+import { useAuth } from '@/context/AuthContext';
 import UserCard from './UserCard';
 
 interface BrowsePageProps {

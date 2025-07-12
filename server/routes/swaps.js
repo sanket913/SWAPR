@@ -1,8 +1,8 @@
-import express from 'express';
-import SwapRequest from '../models/SwapRequest.js';
-import User from '../models/User.js';
-import Notification from '../models/Notification.js';
-import { auth, adminAuth } from '../middleware/auth.js';
+const express = require('express');
+const SwapRequest = require('../models/SwapRequest');
+const User = require('../models/User');
+const Notification = require('../models/Notification');
+const { auth, adminAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -10,9 +10,9 @@ const router = express.Router();
 router.get('/', auth, async (req, res) => {
   try {
     const { type = 'all', status = 'all', limit = 50, page = 1 } = req.query;
-
+    
     let query = {};
-
+    
     if (type === 'sent') {
       query.fromUserId = req.user._id;
     } else if (type === 'received') {
@@ -57,16 +57,18 @@ router.post('/', auth, async (req, res) => {
   try {
     const { toUserId, skillOffered, skillWanted, message, duration, meetingType, location } = req.body;
 
+    // Check if target user exists
     const targetUser = await User.findById(toUserId);
     if (!targetUser) {
       return res.status(404).json({ message: 'Target user not found' });
     }
 
+    // Create swap request
     const swapRequest = new SwapRequest({
       fromUserId: req.user._id,
       toUserId,
-      skillOffered,
-      skillWanted,
+      skillOffered: skillOffered.trim(),
+      skillWanted: skillWanted.trim(),
       message,
       duration: duration || 60,
       meetingType: meetingType || 'video',
@@ -75,6 +77,7 @@ router.post('/', auth, async (req, res) => {
 
     await swapRequest.save();
 
+    // Create notification for target user
     const notification = new Notification({
       userId: toUserId,
       type: 'swap_request',
@@ -85,10 +88,19 @@ router.post('/', auth, async (req, res) => {
 
     await notification.save();
 
+    // Populate the response
     await swapRequest.populate('fromUserId', 'name email profilePhoto');
     await swapRequest.populate('toUserId', 'name email profilePhoto');
 
-    res.status(201).json(swapRequest);
+    // Transform the response to include proper IDs
+    const transformedSwap = {
+      ...swapRequest.toObject(),
+      id: swapRequest._id.toString(),
+      fromUserId: swapRequest.fromUserId._id.toString(),
+      toUserId: swapRequest.toUserId._id.toString()
+    };
+
+    res.status(201).json(transformedSwap);
   } catch (error) {
     console.error('Create swap error:', error);
     res.status(500).json({ message: 'Server error' });
@@ -99,32 +111,33 @@ router.post('/', auth, async (req, res) => {
 router.put('/:id', auth, async (req, res) => {
   try {
     const { status, scheduledAt } = req.body;
-
+    
     const swapRequest = await SwapRequest.findById(req.params.id);
-
+    
     if (!swapRequest) {
       return res.status(404).json({ message: 'Swap request not found' });
     }
 
-    if (
-      swapRequest.toUserId.toString() !== req.user._id.toString() &&
-      swapRequest.fromUserId.toString() !== req.user._id.toString()
-    ) {
+    // Check if user is authorized to update
+    if (swapRequest.toUserId.toString() !== req.user._id.toString() && 
+        swapRequest.fromUserId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
+    // Update swap request
     if (status) swapRequest.status = status;
     if (scheduledAt) swapRequest.scheduledAt = scheduledAt;
 
     await swapRequest.save();
 
+    // Create notification based on status change
     if (status) {
-      const targetUserId = swapRequest.fromUserId.toString() === req.user._id.toString()
-        ? swapRequest.toUserId
+      const targetUserId = swapRequest.fromUserId.toString() === req.user._id.toString() 
+        ? swapRequest.toUserId 
         : swapRequest.fromUserId;
 
       let notificationTitle, notificationMessage;
-
+      
       switch (status) {
         case 'accepted':
           notificationTitle = 'Swap Request Accepted';
@@ -167,11 +180,12 @@ router.put('/:id', auth, async (req, res) => {
 router.delete('/:id', auth, async (req, res) => {
   try {
     const swapRequest = await SwapRequest.findById(req.params.id);
-
+    
     if (!swapRequest) {
       return res.status(404).json({ message: 'Swap request not found' });
     }
 
+    // Check if user is authorized to delete
     if (swapRequest.fromUserId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized' });
     }
@@ -188,10 +202,10 @@ router.delete('/:id', auth, async (req, res) => {
 // Admin: Get all swap requests
 router.get('/admin/all', adminAuth, async (req, res) => {
   try {
-    const { status, limit = 50, page = 1 } = req.query;
-
+    const { search, status, limit = 50, page = 1 } = req.query;
+    
     let query = {};
-
+    
     if (status && status !== 'all') {
       query.status = status;
     }
@@ -220,5 +234,4 @@ router.get('/admin/all', adminAuth, async (req, res) => {
   }
 });
 
-// ✅ ESM Export
-export default router;
+module.exports = router;

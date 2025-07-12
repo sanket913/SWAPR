@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, Sparkles, Shield, Zap } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;
@@ -20,7 +20,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
     setIsLoading(true);
 
     try {
-      const success = login(email, password);
+      const success = await login(email, password);
       if (!success) {
         setError('Invalid email or password');
       }
@@ -142,6 +142,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
                 <Sparkles className="w-4 h-4" />
               </button>
             </p>
+          </div>
+
+          {/* Demo Accounts */}
+          <div className="mt-8 p-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl border-2 border-gray-200/50 animate-slide-in-up delay-300">
+            <p className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+              <Shield className="w-4 h-4 text-green-600" />
+              Demo Accounts:
+            </p>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between p-2 bg-white/50 rounded-lg">
+                <span className="font-semibold text-gray-600">User:</span>
+                <span className="text-gray-800 font-mono">alice@example.com / password</span>
+              </div>
+              <div className="flex items-center justify-between p-2 bg-white/50 rounded-lg">
+                <span className="font-semibold text-gray-600">Admin:</span>
+                <span className="text-gray-800 font-mono">admin@swapr.com / admin123</span>
+              </div>
+            </div>
           </div>
         </div>
 

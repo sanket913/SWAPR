@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Clock, CheckCircle, XCircle, Trash2, Star, MessageSquare } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useSwapRequests, useUsers, useNotifications, useReviews } from '../../hooks/useData';
-import { SwapRequest } from '../../types';
+import { useAuth } from '@/context/AuthContext';
+import { useSwapRequests, useUsers, useNotifications, useReviews } from '@/hooks/useData';
+import { SwapRequest } from '@/types';
 import ReviewModal from './ReviewModal';
 
 const SwapsPage: React.FC = () => {

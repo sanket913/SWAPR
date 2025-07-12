@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Star } from 'lucide-react';
-import { SwapRequest, User } from '../../types';
+import { SwapRequest, User } from '@/types';
 
 interface ReviewModalProps {
   request: SwapRequest;

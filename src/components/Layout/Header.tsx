@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
-import { Menu, X, User, Bell, Search, LogOut, Sparkles, Zap, Heart } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useNotifications } from '../../hooks/useData';
+'use client'
+
+import React, { useState } from 'react'
+import { Menu, X, User, Bell, Search, LogOut, Sparkles, Zap, Heart } from 'lucide-react'
+import Image from 'next/image'
+import { useAuth } from '@/context/AuthContext'
+import { useNotifications } from '@/hooks/useData'
 
 interface HeaderProps {
-  currentPage: string;
-  onPageChange: (page: string) => void;
+  currentPage: string
+  onPageChange: (page: string) => void
 }
 
 const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { currentUser, logout } = useAuth();
-  const { notifications } = useNotifications();
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { currentUser, logout } = useAuth()
+  const { notifications } = useNotifications()
 
-  const unreadCount = notifications.filter(n => !n.isRead && n.userId === currentUser?.id).length;
+  const unreadCount = notifications.filter(n => !n.isRead && n.userId === currentUser?.id).length
 
   const navigation = currentUser?.isAdmin ? [
     { name: 'Dashboard', id: 'admin-dashboard', icon: '📊', gradient: 'from-blue-500 to-cyan-500' },
@@ -25,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
     { name: 'Browse', id: 'browse', icon: '🔍', gradient: 'from-blue-500 to-cyan-500' },
     { name: 'My Swaps', id: 'swaps', icon: '🤝', gradient: 'from-green-500 to-emerald-500' },
     { name: 'Profile', id: 'profile', icon: '👤', gradient: 'from-purple-500 to-pink-500' }
-  ];
+  ]
 
   return (
     <header className="glass-card shadow-2xl sticky top-0 z-50 border-b-2 border-white/20">
@@ -37,22 +40,16 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
               onClick={() => onPageChange('home')}
               className="group flex items-center hover:scale-105 transition-all duration-300"
             >
-              <img
+              <Image
                 src="/logo.png"
                 alt="Swapr"
+                width={200}
+                height={60}
                 className="h-8 w-auto sm:h-10 md:h-12 lg:h-14 max-w-[120px] sm:max-w-[150px] md:max-w-[180px] lg:max-w-[200px] object-contain group-hover:scale-110 transition-transform duration-300"
-                onError={(e) => {
-                  // Fallback to text if image fails to load
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const fallback = target.nextElementSibling as HTMLElement;
-                  if (fallback) fallback.style.display = 'block';
+                onError={() => {
+                  // Fallback handled by Next.js Image component
                 }}
               />
-              {/* Fallback text (hidden by default, shown if image fails) */}
-              <span className="hidden text-xl sm:text-2xl font-black gradient-text-rainbow">
-                Swapr
-              </span>
             </button>
           </div>
 
@@ -115,9 +112,11 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
                 >
                   <div className="relative">
                     {currentUser.profilePhoto ? (
-                      <img
+                      <Image
                         src={currentUser.profilePhoto}
                         alt={currentUser.name}
+                        width={40}
+                        height={40}
                         className="h-10 w-10 rounded-xl object-cover border-2 border-white shadow-lg group-hover:border-blue-200 transition-all duration-300 animate-pulse-glow"
                       />
                     ) : (
@@ -185,9 +184,11 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
               <div className="sm:hidden flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl mb-4 animate-bounce-in">
                 <div className="relative">
                   {currentUser.profilePhoto ? (
-                    <img
+                    <Image
                       src={currentUser.profilePhoto}
                       alt={currentUser.name}
+                      width={48}
+                      height={48}
                       className="h-12 w-12 rounded-xl object-cover border-2 border-white shadow-lg"
                     />
                   ) : (
@@ -207,8 +208,8 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
                 <button
                   key={item.id}
                   onClick={() => {
-                    onPageChange(item.id);
-                    setIsMenuOpen(false);
+                    onPageChange(item.id)
+                    setIsMenuOpen(false)
                   }}
                   className={`flex items-center space-x-3 w-full text-left px-4 py-3 rounded-2xl text-base font-bold transition-all duration-300 animate-slide-in-left delay-${index * 100} ${
                     currentPage === item.id
@@ -228,8 +229,8 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
               <div className="pt-4 border-t border-white/20">
                 <button
                   onClick={() => {
-                    logout();
-                    setIsMenuOpen(false);
+                    logout()
+                    setIsMenuOpen(false)
                   }}
                   className="flex items-center space-x-3 w-full text-left px-4 py-3 rounded-2xl text-base font-bold text-red-600 hover:bg-red-50 transition-all duration-300 glass-card animate-slide-in-left delay-500"
                 >
@@ -242,7 +243,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
         )}
       </div>
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

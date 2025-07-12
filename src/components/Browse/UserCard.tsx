@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapPin, Star, Clock, User as UserIcon, Award, Zap, Heart, Sparkles } from 'lucide-react';
-import { User } from '../../types';
+import { User } from '@/types';
 
 interface UserCardProps {
   user: User;

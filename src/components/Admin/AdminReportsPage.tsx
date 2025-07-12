@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BarChart3, TrendingUp, Users, ArrowRightLeft, Star, Calendar, Download, Filter } from 'lucide-react';
-import { useSwapRequests, useUsers, useReviews } from '../../hooks/useData';
+import { useSwapRequests, useUsers, useReviews } from '@/hooks/useData';
 
 const AdminReportsPage: React.FC = () => {
   const { swapRequests } = useSwapRequests();
@@ -93,7 +93,7 @@ const AdminReportsPage: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Swapr-report-${dateRange}-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `swapr-report-${dateRange}-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

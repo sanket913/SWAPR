@@ -1,16 +1,30 @@
-import express from 'express';
-import User from '../models/User.js';
-import { auth, adminAuth } from '../middleware/auth.js';
+const express = require('express');
+const User = require('../models/User');
+const { auth, adminAuth } = require('../middleware/auth');
 
 const router = express.Router();
+
+// Helper function to transform user data
+const transformUser = (user) => {
+  const userObj = user.toObject ? user.toObject() : user;
+  return {
+    ...userObj,
+    id: userObj._id.toString(),
+    skillsOffered: userObj.skillsOffered.map(skill => skill.name || skill),
+    skillsWanted: userObj.skillsWanted.map(skill => skill.name || skill),
+    availability: userObj.availability.map(slot => slot.description || slot),
+    joinedDate: userObj.createdAt
+  };
+};
 
 // Get all users (public profiles only)
 router.get('/', async (req, res) => {
   try {
-    const { search, location, limit = 50, page = 1 } = req.query;
-
+    const { search, skillType, location, limit = 50, page = 1 } = req.query;
+    
     let query = { isPublic: true, isAdmin: false };
-
+    
+    // Search functionality
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
@@ -32,8 +46,11 @@ router.get('/', async (req, res) => {
 
     const total = await User.countDocuments(query);
 
+    // Transform users for frontend
+    const transformedUsers = users.map(transformUser);
+
     res.json({
-      users,
+      users: transformedUsers,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
@@ -51,12 +68,12 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password -email');
-
+    
     if (!user || (!user.isPublic && !user.isAdmin)) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json(user);
+    res.json(transformUser(user));
   } catch (error) {
     console.error('Get user error:', error);
     res.status(500).json({ message: 'Server error' });
@@ -67,9 +84,63 @@ router.get('/:id', async (req, res) => {
 router.put('/profile', auth, async (req, res) => {
   try {
     const updates = req.body;
-    delete updates.password;
-    delete updates.email;
-    delete updates.isAdmin;
+    delete updates.password; // Don't allow password updates here
+    delete updates.email; // Don't allow email updates here
+    delete updates.isAdmin; // Don't allow admin status changes
+
+    // Process skills if they are being updated
+    if (updates.skillsOffered) {
+      updates.skillsOffered = Array.isArray(updates.skillsOffered) 
+        ? updates.skillsOffered.filter(skill => skill && skill.trim()).map(skill => {
+            if (typeof skill === 'string') {
+              return {
+                name: skill.trim(),
+                category: 'General',
+                level: 'intermediate',
+                tags: [],
+                description: ''
+              };
+            }
+            return skill;
+          })
+        : [];
+    }
+
+    if (updates.skillsWanted) {
+      updates.skillsWanted = Array.isArray(updates.skillsWanted) 
+        ? updates.skillsWanted.filter(skill => skill && skill.trim()).map(skill => {
+            if (typeof skill === 'string') {
+              return {
+                name: skill.trim(),
+                category: 'General',
+                level: 'beginner',
+                tags: [],
+                description: ''
+              };
+            }
+            return skill;
+          })
+        : [];
+    }
+
+    // Process availability if it's being updated
+    if (updates.availability) {
+      updates.availability = Array.isArray(updates.availability) 
+        ? updates.availability.filter(slot => slot && slot.trim()).map(slot => {
+            if (typeof slot === 'string') {
+              return {
+                dayOfWeek: 0,
+                startTime: '09:00',
+                endTime: '17:00',
+                timezone: 'UTC',
+                recurring: true,
+                description: slot.trim()
+              };
+            }
+            return slot;
+          })
+        : [];
+    }
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
@@ -77,7 +148,7 @@ router.put('/profile', auth, async (req, res) => {
       { new: true, runValidators: true }
     ).select('-password');
 
-    res.json(user);
+    res.json(transformUser(user));
   } catch (error) {
     console.error('Update profile error:', error);
     res.status(500).json({ message: 'Server error' });
@@ -88,9 +159,9 @@ router.put('/profile', auth, async (req, res) => {
 router.get('/admin/all', adminAuth, async (req, res) => {
   try {
     const { search, status, limit = 50, page = 1 } = req.query;
-
+    
     let query = { isAdmin: false };
-
+    
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
@@ -112,8 +183,14 @@ router.get('/admin/all', adminAuth, async (req, res) => {
 
     const total = await User.countDocuments(query);
 
+    // Transform users for frontend
+    const transformedUsers = users.map(user => ({
+      ...transformUser(user),
+      email: user.email // Include email for admin view
+    }));
+
     res.json({
-      users,
+      users: transformedUsers,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
@@ -131,7 +208,42 @@ router.get('/admin/all', adminAuth, async (req, res) => {
 router.put('/admin/:id', adminAuth, async (req, res) => {
   try {
     const updates = req.body;
-    delete updates.password;
+    delete updates.password; // Don't allow password updates here
+
+    // Process skills if they are being updated
+    if (updates.skillsOffered) {
+      updates.skillsOffered = Array.isArray(updates.skillsOffered) 
+        ? updates.skillsOffered.filter(skill => skill && skill.trim()).map(skill => {
+            if (typeof skill === 'string') {
+              return {
+                name: skill.trim(),
+                category: 'General',
+                level: 'intermediate',
+                tags: [],
+                description: ''
+              };
+            }
+            return skill;
+          })
+        : [];
+    }
+
+    if (updates.skillsWanted) {
+      updates.skillsWanted = Array.isArray(updates.skillsWanted) 
+        ? updates.skillsWanted.filter(skill => skill && skill.trim()).map(skill => {
+            if (typeof skill === 'string') {
+              return {
+                name: skill.trim(),
+                category: 'General',
+                level: 'beginner',
+                tags: [],
+                description: ''
+              };
+            }
+            return skill;
+          })
+        : [];
+    }
 
     const user = await User.findByIdAndUpdate(
       req.params.id,
@@ -143,7 +255,7 @@ router.put('/admin/:id', adminAuth, async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json(user);
+    res.json(transformUser(user));
   } catch (error) {
     console.error('Admin update user error:', error);
     res.status(500).json({ message: 'Server error' });
@@ -154,7 +266,7 @@ router.put('/admin/:id', adminAuth, async (req, res) => {
 router.delete('/admin/:id', adminAuth, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
-
+    
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -166,4 +278,4 @@ router.delete('/admin/:id', adminAuth, async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

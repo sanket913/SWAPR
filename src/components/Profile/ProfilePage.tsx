@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Edit2, Save, X, Plus, Trash2, User, MapPin, Calendar, Star, Award, Zap, Clock, Shield } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 
 const ProfilePage: React.FC = () => {
   const { currentUser, updateProfile } = useAuth();
@@ -21,8 +21,12 @@ const ProfilePage: React.FC = () => {
   if (!currentUser) return null;
 
   const handleSave = () => {
-    updateProfile(formData);
-    setIsEditing(false);
+    updateProfile(formData).then(() => {
+      setIsEditing(false);
+    }).catch((error) => {
+      console.error('Failed to update profile:', error);
+      alert('Failed to update profile. Please try again.');
+    });
   };
 
   const handleCancel = () => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, MapPin, Sparkles, Rocket, Heart } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
@@ -36,7 +36,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
     setIsLoading(true);
 
     try {
-      const success = register({
+      const success = await register({
         name: formData.name,
         email: formData.email,
         password: formData.password,
