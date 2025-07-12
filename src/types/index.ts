@@ -175,6 +175,3 @@ export interface AdminStats {
   totalReviews: number;
   averageRating: number;
 }
-
-export type Page = 'home' | 'login' | 'register' | 'browse' | 'profile' | 'swaps' | 'notifications' | 
-            'admin-dashboard' | 'admin-users' | 'admin-swaps' | 'admin-reports' | 'admin-announcements';

@@ -2,8 +2,7 @@ import React from 'react';
 import { Users, ArrowRightLeft, Star, TrendingUp, Activity, Calendar, Zap, Target, Globe, Sparkles } from 'lucide-react';
 import { useSwapRequests, useUsers, useReviews } from '@/hooks/useData';
 import { AdminStats } from '@/types';
-
-import { Page } from '@/types/index'; // Use same shared type
+import type { Page } from '../../App'; 
 
 
 interface AdminDashboardProps {
@@ -97,47 +96,46 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onPageChange }) => {
   ];
 
   const quickActions: {
-    title: string;
-    description: string;
-    icon: React.ElementType;
-    gradient: string;
-    page: Page;
-    emoji: string;
-  }[] = [
-    {
-      title: 'Manage Users',
-      description: 'View and moderate user accounts',
-      icon: Users,
-      gradient: 'from-blue-500 to-cyan-500',
-      page: 'admin-users' as Page,
-      emoji: '👥'
-    },
-    {
-      title: 'Monitor Swaps',
-      description: 'Review ongoing skill exchanges',
-      icon: ArrowRightLeft,
-      gradient: 'from-green-500 to-emerald-500',
-      page: 'admin-swaps' as Page,
-      emoji: '🔄'
-    },
-    {
-      title: 'Send Announcement',
-      description: 'Broadcast platform updates',
-      icon: Activity,
-      gradient: 'from-purple-500 to-pink-500',
-      page: 'admin-announcements' as Page,
-      emoji: '📢'
-    },
-    {
-      title: 'View Reports',
-      description: 'Analytics and insights',
-      icon: Calendar,
-      gradient: 'from-orange-500 to-red-500',
-      page: 'admin-reports' as Page,
-      emoji: '📈'
-    }
-  ];
-
+  title: string;
+  description: string;
+  icon: any;
+  gradient: string;
+  page: Page;
+  emoji: string;
+}[] = [
+  {
+    title: 'Manage Users',
+    description: 'View and moderate user accounts',
+    icon: Users,
+    gradient: 'from-blue-500 to-cyan-500',
+    page: 'admin-users',
+    emoji: '👥'
+  },
+  {
+    title: 'Monitor Swaps',
+    description: 'Review ongoing skill exchanges',
+    icon: ArrowRightLeft,
+    gradient: 'from-green-500 to-emerald-500',
+    page: 'admin-swaps',
+    emoji: '🔄'
+  },
+  {
+    title: 'Send Announcement',
+    description: 'Broadcast platform updates',
+    icon: Activity,
+    gradient: 'from-purple-500 to-pink-500',
+    page: 'admin-announcements',
+    emoji: '📢'
+  },
+  {
+    title: 'View Reports',
+    description: 'Analytics and insights',
+    icon: Calendar,
+    gradient: 'from-orange-500 to-red-500',
+    page: 'admin-reports',
+    emoji: '📈'
+  }
+];
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 particle-bg">
       {/* Floating Elements */}

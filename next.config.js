@@ -16,7 +16,7 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],
-  },
-}
+  }
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

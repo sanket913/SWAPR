@@ -54,9 +54,10 @@ const AdminReportsPage: React.FC = () => {
     return acc;
   }, {} as Record<string, number>);
 
-  const popularSkills = Object.entries(skillCounts)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 10);
+  const popularSkills = Object.entries(skillCounts as Record<string, number>)
+  .sort(([, a], [, b]) => b - a)
+  .slice(0, 10);
+
 
   // User growth data (simplified)
   const getUserGrowthData = () => {

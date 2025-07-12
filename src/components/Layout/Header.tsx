@@ -1,14 +1,16 @@
 'use client'
 
 import React, { useState } from 'react'
+import type { Page } from '../../App'; // adjust path as needed
+
+
 import { Menu, X, User, Bell, Search, LogOut, Sparkles, Zap, Heart } from 'lucide-react'
 import Image from 'next/image'
 import { useAuth } from '@/context/AuthContext'
 import { useNotifications } from '@/hooks/useData'
-import { Page } from '@/types/index';
 
 interface HeaderProps {
-  currentPage: Page
+  currentPage: string
   onPageChange: (page: Page) => void
 }
 
