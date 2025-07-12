@@ -3,8 +3,11 @@ import { Users, ArrowRightLeft, Star, TrendingUp, Activity, Calendar, Zap, Targe
 import { useSwapRequests, useUsers, useReviews } from '@/hooks/useData';
 import { AdminStats } from '@/types';
 
+import { Page } from '@/types/index'; // Use same shared type
+
+
 interface AdminDashboardProps {
-  onPageChange: (page: string) => void;
+  onPageChange: (page: Page) => void;
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onPageChange }) => {
@@ -93,13 +96,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onPageChange }) => {
     }
   ];
 
-  const quickActions = [
+  const quickActions: {
+    title: string;
+    description: string;
+    icon: React.ElementType;
+    gradient: string;
+    page: Page;
+    emoji: string;
+  }[] = [
     {
       title: 'Manage Users',
       description: 'View and moderate user accounts',
       icon: Users,
       gradient: 'from-blue-500 to-cyan-500',
-      page: 'admin-users',
+      page: 'admin-users' as Page,
       emoji: '👥'
     },
     {
@@ -107,7 +117,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onPageChange }) => {
       description: 'Review ongoing skill exchanges',
       icon: ArrowRightLeft,
       gradient: 'from-green-500 to-emerald-500',
-      page: 'admin-swaps',
+      page: 'admin-swaps' as Page,
       emoji: '🔄'
     },
     {
@@ -115,7 +125,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onPageChange }) => {
       description: 'Broadcast platform updates',
       icon: Activity,
       gradient: 'from-purple-500 to-pink-500',
-      page: 'admin-announcements',
+      page: 'admin-announcements' as Page,
       emoji: '📢'
     },
     {
@@ -123,7 +133,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onPageChange }) => {
       description: 'Analytics and insights',
       icon: Calendar,
       gradient: 'from-orange-500 to-red-500',
-      page: 'admin-reports',
+      page: 'admin-reports' as Page,
       emoji: '📈'
     }
   ];

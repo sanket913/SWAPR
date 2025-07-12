@@ -5,10 +5,11 @@ import { Menu, X, User, Bell, Search, LogOut, Sparkles, Zap, Heart } from 'lucid
 import Image from 'next/image'
 import { useAuth } from '@/context/AuthContext'
 import { useNotifications } from '@/hooks/useData'
+import { Page } from '@/types/index';
 
 interface HeaderProps {
-  currentPage: string
-  onPageChange: (page: string) => void
+  currentPage: Page
+  onPageChange: (page: Page) => void
 }
 
 const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
@@ -59,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
               {navigation.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => onPageChange(item.id)}
+                  onClick={() => onPageChange(item.id as Page)}
                   className={`group relative px-6 py-3 rounded-2xl text-sm font-bold transition-all duration-300 transform hover:scale-105 ${
                     currentPage === item.id
                       ? `text-white bg-gradient-to-r ${item.gradient} shadow-xl animate-pulse-glow`
@@ -208,7 +209,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange }) => {
                 <button
                   key={item.id}
                   onClick={() => {
-                    onPageChange(item.id)
+                    onPageChange(item.id as Page)
                     setIsMenuOpen(false)
                   }}
                   className={`flex items-center space-x-3 w-full text-left px-4 py-3 rounded-2xl text-base font-bold transition-all duration-300 animate-slide-in-left delay-${index * 100} ${

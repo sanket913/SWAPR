@@ -15,9 +15,9 @@ import AdminReportsPage from './components/Admin/AdminReportsPage';
 import AdminAnnouncementsPage from './components/Admin/AdminAnnouncementsPage';
 import UserProfileModal from './components/UserProfile/UserProfileModal';
 import { useUsers } from './hooks/useData';
+import { Page } from './types/index'; // or '@/types/pages' if using alias
 
-type Page = 'home' | 'login' | 'register' | 'browse' | 'profile' | 'swaps' | 'notifications' | 
-            'admin-dashboard' | 'admin-users' | 'admin-swaps' | 'admin-reports' | 'admin-announcements';
+
 
 const AppContent: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
